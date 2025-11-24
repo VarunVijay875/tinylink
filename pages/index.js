@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { getBaseUrl } from "../lib/baseUrl";
 
 export default function Home() {
   const [links, setLinks] = useState([]);
@@ -74,7 +75,9 @@ export default function Home() {
   };
 
   const handleCopy = async (shortCode) => {
-    const shortUrl = `http://localhost:3000/${shortCode}`;
+    const baseUrl = getBaseUrl();
+    const shortUrl = `${baseUrl}/${shortCode}`;
+
     try {
       await navigator.clipboard.writeText(shortUrl);
       alert("Copied!");
@@ -176,62 +179,66 @@ export default function Home() {
                   </tr>
                 </thead>
                 <tbody>
-                  {links.map((link) => (
-                    <tr
-                      key={link.code}
-                      className="hover:bg-slate-900/70 transition-colors"
-                    >
-                      <td className="px-3 py-2 align-top">
-                        <Link
-                          href={`/code/${link.code}`}
-                          className="text-sky-400 hover:text-sky-300 underline"
-                        >
-                          {link.code}
-                        </Link>
-                      </td>
-                      <td className="px-3 py-2 align-top max-w-xs">
-                        <a
-                          href={link.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="block text-slate-100 truncate hover:text-sky-300"
-                        >
-                          {link.url}
-                        </a>
-                      </td>
-                      <td className="px-3 py-2 align-top">{link.clicks}</td>
-                      <td className="px-3 py-2 align-top">
-                        {link.lastClicked
-                          ? new Date(link.lastClicked).toLocaleString()
-                          : "—"}
-                      </td>
-                      <td className="px-3 py-2 align-top">
-                        <input
-                          className="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-xs"
-                          readOnly
-                          value={`http://localhost:3000/${link.code}`}
-                        />
-                      </td>
-                      <td className="px-3 py-2 align-top">
-                        <div className="flex gap-2">
-                          <button
-                            type="button"
-                            onClick={() => handleCopy(link.code)}
-                            className="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-xs"
+                  {links.map((link) => {
+                    const shortUrl = `${getBaseUrl()}/${link.code}`;
+
+                    return (
+                      <tr
+                        key={link.code}
+                        className="hover:bg-slate-900/70 transition-colors"
+                      >
+                        <td className="px-3 py-2 align-top">
+                          <Link
+                            href={`/code/${link.code}`}
+                            className="text-sky-400 hover:text-sky-300 underline"
                           >
-                            Copy
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleDelete(link.code)}
-                            className="px-2 py-1 rounded bg-red-600 hover:bg-red-500 text-xs"
+                            {link.code}
+                          </Link>
+                        </td>
+                        <td className="px-3 py-2 align-top max-w-xs">
+                          <a
+                            href={link.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="block text-slate-100 truncate hover:text-sky-300"
                           >
-                            Delete
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                            {link.url}
+                          </a>
+                        </td>
+                        <td className="px-3 py-2 align-top">{link.clicks}</td>
+                        <td className="px-3 py-2 align-top">
+                          {link.lastClicked
+                            ? new Date(link.lastClicked).toLocaleString()
+                            : "—"}
+                        </td>
+                        <td className="px-3 py-2 align-top">
+                          <input
+                            className="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-xs"
+                            readOnly
+                            value={shortUrl}
+                          />
+                        </td>
+                        <td className="px-3 py-2 align-top">
+                          <div className="flex gap-2">
+                            <button
+                              type="button"
+                              onClick={() => handleCopy(link.code)}
+                              className="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-xs"
+                            >
+                              Copy
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDelete(link.code)}
+                              className="px-2 py-1 rounded bg-red-600 hover:bg-red-500 text-xs"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
