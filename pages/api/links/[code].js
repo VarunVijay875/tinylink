@@ -17,7 +17,8 @@ export default async function handler(req, res) {
   }
 
   // DELETE /api/links/:code
-  if (req.method === "DELETE") {
+if (req.method === "DELETE") {
+  try {
     const exists = await prisma.link.findUnique({
       where: { code },
     });
@@ -31,7 +32,11 @@ export default async function handler(req, res) {
     });
 
     return res.status(204).end();
+  } catch (error) {
+    console.error("DELETE ERROR:", error);
+    return res.status(500).json({ error: "server error", details: error.message });
   }
+}
 
   // Unsupported methods
   res.setHeader("Allow", ["GET", "DELETE"]);
